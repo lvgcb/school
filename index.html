@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extreme Fast QR Switcher</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --accent-gold: #ffd700;
+        }
+
+        body {
+            background-color: #020205;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .firework-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #0d0d25 0%, #020205 100%);
+            z-index: -1;
+        }
+
+        .display-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-card {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 80px rgba(255, 215, 0, 0.5);
+            border: 5px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Возвращена анимация 0.1s */
+            transition: all 0.1s ease-out;
+            opacity: 0;
+        }
+
+        .qr-card.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 10;
+        }
+
+        .qr-card.leaving {
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .scan-text {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.4rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 900;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.96); }
+        }
+
+        .confetti {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            top: -20px;
+            border-radius: 2px;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scan-text">ПОЛУЧИ СВОЁ </br>
+  ПРЕДСКАЗАНИЕ!</div>
+
+    <div class="firework-bg"></div>
+
+    <div class="display-container" id="container">
+        <!-- Карточки генерируются скриптом -->
+    </div>
+
+    <div class="scan-text">СКАНИРУЙ!</div>
+
+    <script>
+        const container = document.getElementById('container');
+        
+        const qrLinks = [
+            "https://wheelqr.netlify.app/pages/1.html",
+            "https://wheelqr.netlify.app/pages/2.html",
+            "https://wheelqr.netlify.app/pages/3.html",
+            "https://wheelqr.netlify.app/pages/4.html",
+            "https://wheelqr.netlify.app/pages/5.html",
+            "https://wheelqr.netlify.app/pages/6.html",
+            "https://wheelqr.netlify.app/pages/7.html"
+        ];
+
+        let currentIndex = 0;
+
+        function createQRCard(index) {
+            const card = document.createElement('div');
+            card.className = 'qr-card';
+            
+            const qrDiv = document.createElement('div');
+            card.appendChild(qrDiv);
+            container.appendChild(card);
+
+            new QRCode(qrDiv, {
+                text: qrLinks[index],
+                width: 240,
+                height: 240,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
+
+            return card;
+        }
+
+        function switchQR() {
+            const oldCard = document.querySelector('.qr-card.active');
+            
+            if (oldCard) {
+                oldCard.classList.remove('active');
+                oldCard.classList.add('leaving');
+                setTimeout(() => oldCard.remove(), 100);
+            }
+
+            const newCard = createQRCard(currentIndex);
+            
+            setTimeout(() => {
+                newCard.classList.add('active');
+            }, 10);
+
+            currentIndex = (currentIndex + 1) % qrLinks.length;
+        }
+
+        function initConfetti() {
+            const colors = ['#ffd700', '#ff4d4d', '#4b69ff', '#ffffff'];
+            function spawnPart() {
+                const p = document.createElement('div');
+                p.className = 'confetti';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.width = '4px';
+                p.style.height = '4px';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                const duration = Math.random() * 1.5 + 1;
+                p.style.animation = `confetti-fall ${duration}s linear forwards`;
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), duration * 1000);
+            }
+            setInterval(spawnPart, 50);
+        }
+
+        window.onload = () => {
+            initConfetti();
+            switchQR();
+            
+            // Интервал возвращен к 600 мс
+            setInterval(switchQR, 600);
+        };
+    </script>
+</body>
+</html>

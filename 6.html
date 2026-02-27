@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Твое Предсказание</title>
+    <style>
+        /* Modern, clean styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            /* Update this color for each file if you want unique backgrounds */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            max-width: 450px;
+            width: 85%;
+            backdrop-filter: blur(5px);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        img {
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <img src="./silly_ham.jpg" alt="Star">
+        <h1>Смелое решение откроет новую дорогу.</h1>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        window.onload = function() {
+            // High-intensity confetti burst
+            const end = Date.now() + (2 * 1000);
+            const colors = ['#bb0000', '#ffffff', '#ffeb3b', '#4caf50'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 2,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 2,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        };
+    </script>
+</body>
+</html>
